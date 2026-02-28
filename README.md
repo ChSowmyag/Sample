@@ -109,33 +109,33 @@ graph TB
 
 #### 2. Component Structure
 ```mermaid
-componentDiagram
-    [App Flow / Router] <<Main>> as App
+graph TB
+    App[App Flow / Router]
 
-    package "Navigation Layer" {
-        [Drawer Layout] as Drawer
-        [Tabs Layout] as Tabs
-    }
+    subgraph Navigation_Layer ["Navigation Layer"]
+        Drawer[Drawer Layout]
+        Tabs[Tabs Layout]
+    end
 
-    package "State Management" {
-        [AuthContext] as AuthCtx
-        [CarContext] as CarCtx
-        [ThemeContext] as ThemeCtx
-    }
+    subgraph State_Management ["State Management"]
+        AuthCtx[AuthContext]
+        CarCtx[CarContext]
+        ThemeCtx[ThemeContext]
+    end
 
-    package "Feature Components" {
-        [3D Studio / Hybrid] as Studio
-        [AR Scenes] as AR
-        [Car Catalog] as Catalog
-        [Comparison View] as Compare
-        [Personalization] as Prefs
-    }
+    subgraph Feature_Components ["Feature Components"]
+        Studio[3D Studio / Hybrid]
+        AR[AR Scenes]
+        Catalog[Car Catalog]
+        Compare[Comparison View]
+        Prefs[Personalization]
+    end
 
-    package "Service Layer" {
-        [API Client] as Client
-        [Blender Service] as Blender
-        [Recommendation Service] as Rec
-    }
+    subgraph Service_Layer ["Service Layer"]
+        Client[API Client]
+        Blender[Blender Service]
+        Rec[Recommendation Service]
+    end
 
     App --> Drawer
     Drawer --> Tabs
@@ -299,39 +299,41 @@ stateDiagram-v2
     Authenticated_State --> Guest_State : Logout
 ```
 
-#### 3. User Journey (Activity)
+#### 3. User Journey (Activity Flow)
 ```mermaid
-activityDiagram
-    start
-    :User Launches App;
-    if (Is Logged In?) then (No)
-        :Browse Generic Catalog;
-        :View Car Details;
-        if (User wants to customize?) then (Yes)
-            :Prompt Login;
-            stop
-        else (No)
-            stop
-        endif
-    else (Yes)
-        :View Personalized Recommendations;
-        :Search/Select Specific Car;
-        :Open 3D Studio;
-        repeat
-            :Pick Material (Paint, Wheels, etc.);
-            :Apply Color/Texture;
-            :Manipulate Model (Rotate/Zoom);
-        until (User Satisfied?)
-        fork
-            :Save to My Showroom;
-        fork
-            :Launch AR Experience;
-            :Find Horizontal Surface;
-            :Place Car in Real World;
-            :Take Screenshot/View;
-        end fork
-    endif
-    stop
+flowchart TD
+    Start((Start)) --> Launch[User Launches App]
+    Launch --> CheckLogin{Is Logged In?}
+    
+    CheckLogin -- No --> Browse[Browse Generic Catalog]
+    Browse --> ViewDetailsGuest[View Car Details]
+    ViewDetailsGuest --> WantsCustom{User wants to customize?}
+    WantsCustom -- Yes --> Prompt[Prompt Login]
+    Prompt --> EndGuest(((End)))
+    WantsCustom -- No --> EndGuest
+    
+    CheckLogin -- Yes --> Recs[View Personalized Recommendations]
+    Recs --> Search[Search/Select Specific Car]
+    Search --> Studio[Open 3D Studio]
+    
+    Studio --> PickMat[Pick Material: Paint, Wheels, etc.]
+    PickMat --> ApplyCol[Apply Color/Texture]
+    ApplyCol --> Manipulate[Manipulate Model: Rotate/Zoom]
+    Manipulate --> Satisfied{User Satisfied?}
+    
+    Satisfied -- No --> PickMat
+    Satisfied -- Yes --> ActionsFork((Fork))
+    
+    ActionsFork --> Save[Save to My Showroom]
+    ActionsFork --> LaunchAR[Launch AR Experience]
+    
+    LaunchAR --> Surface[Find Horizontal Surface]
+    Surface --> Place[Place Car in Real World]
+    Place --> Snap[Take Screenshot/View]
+    
+    Save --> Join((Join))
+    Snap --> Join
+    Join --> EndAuth(((End)))
 ```
 
 ---
@@ -431,6 +433,49 @@ sequenceDiagram
     RA->>S: POST /feedback
     S->>RE: Update User Behavior Model
 ```
+
+---
+
+## 🚀 Getting Started & Setup Instructions
+
+The backend consists of two main applications running concurrently. Follow the steps below to initialize the repository locally.
+
+### Prerequisites
+*   **Java 17** & **Maven**
+*   **PostgreSQL 15**
+*   **Python 3.10+** (For the Blender Microservice)
+*   **Blender 3.x or 4.x** (Installed locally and added to PATH)
+
+### 1. Database Setup
+1. Create a PostgreSQL database named `ar_car_showcase` (or update `application.properties` to match your existing DB).
+2. Configure your DB credentials in the Spring Boot `application.properties` file located at `src/main/resources/application.properties`.
+
+### 2. Running the Spring Boot Server
+1. Navigate to the root directory of the backend repository.
+2. Build and run the Maven project:
+   ```bash
+   mvn clean install
+   mvn spring-boot:run
+   ```
+3. The core API server will start on port `8080`.
+
+### 3. Running the Blender Python Service
+This service intercepts requests from the Spring boot application to dynamically assemble 3D files.
+1. Navigate to the python microservice directory (adjust path based on your exact repository structure, e.g., `cd blender-service` or `cd src/main/python`).
+2. Set up a Python virtual environment:
+   ```bash
+   python -m venv venv
+   source venv/bin/activate  # On Windows, use `.\venv\Scripts\activate`
+   ```
+3. Install the required Python dependencies (Flask/FastAPI, etc.):
+   ```bash
+   pip install -r requirements.txt
+   ```
+4. Start the application:
+   ```bash
+   python app.py  # Or run via flask/uvicorn depending on framework
+   ```
+5. Ensure that the `bpy` (Blender Python module) successfully initializes. The microservice typically runs on port `5000` or `8000` and receives REST calls directly from the Spring Boot API whenever a user clicks "View in AR".
 
 ## How Customization & AR Works
 1.  **Selection:** The user explores the digital showroom on their mobile app and selects a base car model.
