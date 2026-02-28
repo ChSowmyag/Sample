@@ -4,16 +4,15 @@ An immersive **Augmented Reality Car Showcase** mobile app powered by a robust b
 
 ---
 
-## 🔗 Related Repository
+## � Project Overview
 
-This repository specifically contains the **Spring Boot Server** and **Blender Microservice**.
-If you are looking for the mobile app UI built with React Native and Viro AR, see the frontend repository below:
+The **Augmented Reality (AR) Car Showcase** is a mobile-based digital showroom that allows users to visualize, customize, and evaluate vehicles within their real environment. 
 
-*   📱 **[AR-Car-Showcase Frontend Repository](https://github.com/AdepuSriCharan/AR-Car-Showcase.git)**
+The system integrates a mobile interface developed using React Native, a **Spring Boot backend service** for data management and authentication, a **Blender-based 3D model generation pipeline** for configurable vehicle models, and a **Machine-Learning recommendation module** for personalized vehicle suggestions. The application enables real-time interaction with 3D models, modification of vehicle appearance parameters, and placement of life-scale vehicles within physical surroundings through augmented reality.
 
 ---
 
-## 🛠️ Backend Tech Stack
+## �️ Backend Tech Stack
 
 | Technology | Role |
 | :--- | :--- |
@@ -24,89 +23,13 @@ If you are looking for the mobile app UI built with React Native and Viro AR, se
 
 ---
 
-## 🌐 Backend Architecture Overview
+## 🌐 Core System Architecture
 
-The backend acts as the central data orchestrator for the mobile AR application. It seamlessly connects user account configurations driven by the mobile app down to the dynamic 3D asset generation handled by a separate python microservice.
-
-### 1. Spring Boot Core Service
-*   **Data Management & Authentication:** Handles user accounts, secures the API endpoints using robust session controls, and fetches real-time catalog data.
-*   **Customization Persistence:** Saves the user's selected configuration for cars inside the virtual Studio. Attributes stored include:
-    *   **Primary** (exterior body)
-    *   **Secondary** (accents/trim)
-    *   **Interior 1** (primary upholstery)
-    *   **Interior 2** (secondary details/dashboard)
-
-### 2. Blender 3D Model Customization Service (Microservice)
-*   **Dynamic Generation:** A specialized Python/Flask service that takes hex color parameters directly from the Spring Server.
-*   **Material Application:** Automatically extracts these hex codes and maps them to physical materials on the base 3D vehicle `.blend` or `.obj` files using Blender's Python API (`bpy`).
-*   **AR-Ready Export:** Asynchronously renders the customized materials and exports a finalized `.glb` 3D streaming footprint payload perfectly optimized for the mobile ViroReact AR engine.
-
-### 3. Recommendation Engine
-*   **Intelligent Suggestions:** Analyzes user query behavior, interactions inside the AR Studio, and spatial session duration.
-*   **Discovery Engine:** Recommends targeted, personalized cars that match the behavioral signature of the logged-in user in real-time.
-
-## 📚 Documentation Hub
-
-To keep this repository clean and easy to navigate, detailed information has been organized into dedicated documentation files. 
-Please refer to the following links for full setup instructions, backend architecture details, and all graphical UML diagrams.
-
-### 1. Project Setup
-*   **[Setup & Installation Guide](SETUP.md):** Step-by-step instructions on setting up PostgreSQL, running the Spring Boot server, and initializing the Python Blender microservice.
-
-### 2. Architecture & Features
-*   **[Backend Architecture Overview](ARCHITECTURE.md):** Deep dive into how the Spring Core server, the `.glb` Blender generator, and the ML Recommendation Engine interact to serve the mobile app.
-
-### 3. UML Diagram Gallery
-Detailed UML diagrams (using Mermaid.js syntax) map out the entire structural, behavioral, and interaction logic.
-*   **[Categorized UML Reference View](Categorized_UML_Reference.md):** Single-page view of all diagrams.
-*   **[Structural Architecture](src/main/resources/Project_UML_Docs/Structural/):** System, Component, and Class logic diagrams.
-*   **[Behavioral Flows](src/main/resources/Project_UML_Docs/Behavioral/):** App state machines, Use Cases, and User Journeys.
-*   **[Interaction Flows](src/main/resources/Project_UML_Docs/Interactions/):** Sequence diagrams for Auth, 3D AR Customization, and ML Recommendations.
-
----
-
-## 📱 Frontend Client Application
-
-The backend serves an immersive **Augmented Reality Car Showcase** mobile app built with **React Native**, **Expo**, and **ViroReact**.
-
-### Mobile App Overview
-- 🔭 **Augmented Reality:** View 3D car models in the real environment using ViroReact (ARCore/ARKit)
-- 🎨 **Color Customization:** Customize car body, rims, interior, carbon fiber, etc., per material slot
-- 🚘 **3D Model Viewer:** Explore detailed models with React Three Fiber (pinch-to-zoom, swipe-to-rotate)
-- 🧠 **AI Recommendations:** Fetches personalized car suggestions from the Spring Boot backend
-- 🗂️ **File-Based Routing:** Powered by Expo Router for seamless navigation
-
-### Frontend Architecture
-
-The mobile app relies on a **layered, context-driven architecture**:
-
-```
-┌─────────────────────────────────────────────────┐
-│                   Expo Router                   │
-│         (File-based Navigation + Layouts)       │
-├─────────────────────────────────────────────────┤
-│               React Context Layer               │
-│  AuthContext │ CarContext │ ThemeContext      │
-├─────────────────────────────────────────────────┤
-│              Screen / Page Layer                │
-│  app/(main)/  │  app/auth/  │  app/scenes/    │
-├─────────────────────────────────────────────────┤
-│             Component Layer                     │
-│  CarCard │ CustomizerScreen │ AnimatedTabBar  │
-├─────────────────────────────────────────────────┤
-│             Custom Hooks Layer                  │
-│  useModelSource │ useSceneMaterials           │
-├─────────────────────────────────────────────────┤
-│           3D / AR Rendering Layer               │
-│  R3F Canvas (Studio) │ ViroReact (AR Scene)   │
-└─────────────────────────────────────────────────┘
-```
-
-### Full System Architecture (Frontend to Backend)
+The following diagram illustrates the high-level architecture of the AR Car Showcase application, showing the interaction between the mobile frontend, the AR engine, and the backend services.
 
 ```mermaid
 graph TB
-    subgraph "Mobile Client (React Native / Expo SDK 54+)"
+    subgraph "Mobile Client (React Native)"
         UI["User Interface (React Native Screens)"]
         Context["State Management (React Context API)"]
         API_Client["Network Layer (Fetch/AsyncStorage)"]
@@ -120,11 +43,12 @@ graph TB
 
     subgraph "Distributed Backend (Cloud Hosted)"
         Main_Server["Spring Boot API (Java 17/Maven)"]
-        Blender_Service["Blender Microservice (Python/Flask)"]
+        Blender_Service["Blender Microservice (Python/FastAPI)"]
         Rec_Engine["Recommendation Engine (Java/PostgreSQL)"]
         DB[(PostgreSQL 15 / Persistence)]
     end
 
+    %% Relationships
     UI --> Context
     Context --> API_Client
     API_Client <--> Main_Server
@@ -142,36 +66,27 @@ graph TB
     Rec_Engine -.-> |"JSON Preferences"| UI
 ```
 
-### State Machine Diagram (Client Navigation)
+---
 
-```mermaid
-stateDiagram-v2
-    [*] --> Guest_State
+## 📚 Documentation Hub
 
-    state Guest_State {
-        [*] --> Home_Browse
-        Home_Browse --> Details_View
-        Details_View --> Home_Browse
-        Details_View --> 3D_Studio_Limited
-    }
+To keep this repository clean and easy to navigate, detailed information has been organized into dedicated documentation files. 
+Please refer to the following links for full setup instructions, deeper architecture details, and all graphical UML diagrams.
 
-    Guest_State --> Authenticated_State : Login Success
+### 1. Project Setup
+*   **[Setup & Installation Guide](docs/SETUP.md):** Step-by-step instructions on setting up PostgreSQL, running the Spring Boot server, and initializing the Python Blender microservice.
 
-    state Authenticated_State {
-        [*] --> Dashboard
-        Dashboard --> Customization_Studio
-        Customization_Studio --> AR_Mode
-        AR_Mode --> Customization_Studio
+### 2. Architecture & Features Details
+*   **[Backend Architecture Overview](docs/ARCHITECTURE.md):** Deep dive into how the Spring Core server, the `.glb` Blender generator, and the ML Recommendation Engine interact to serve the mobile app.
 
-        Dashboard --> Comparison_Tool
-        Dashboard --> Personal_Showroom
+### 3. Detailed UML Diagram Gallery
+*   **[UML Documentation Hub](docs/UML.md):** A detailed gallery containing links to all Structural, Behavioral, and Interaction UML diagrams (such as Auth flows, 3D logic, and Recommendations).
 
-        state Customization_Studio {
-            [*] --> Exterior_View
-            Exterior_View --> Interior_View
-            Interior_View --> Exterior_View
-        }
-    }
+---
 
-    Authenticated_State --> Guest_State : Logout
-```
+## 🔗 Related Repository
+
+This repository specifically contains the **Spring Boot Server** and **Blender Microservice**.
+If you are looking for the mobile app UI built with React Native and Viro AR, see the frontend repository below:
+
+*   📱 **[AR-Car-Showcase Frontend Repository](https://github.com/AdepuSriCharan/AR-Car-Showcase.git)**
