@@ -51,14 +51,14 @@ To keep this repository clean and easy to navigate, detailed information has bee
 Please refer to the following links for full setup instructions, backend architecture details, and all graphical UML diagrams.
 
 ### 1. Project Setup
-*   **[Setup & Installation Guide](docs/SETUP.md):** Step-by-step instructions on setting up PostgreSQL, running the Spring Boot server, and initializing the Python Blender microservice.
+*   **[Setup & Installation Guide](SETUP.md):** Step-by-step instructions on setting up PostgreSQL, running the Spring Boot server, and initializing the Python Blender microservice.
 
 ### 2. Architecture & Features
-*   **[Backend Architecture Overview](docs/ARCHITECTURE.md):** Deep dive into how the Spring Core server, the `.glb` Blender generator, and the ML Recommendation Engine interact to serve the mobile app.
+*   **[Backend Architecture Overview](ARCHITECTURE.md):** Deep dive into how the Spring Core server, the `.glb` Blender generator, and the ML Recommendation Engine interact to serve the mobile app.
 
 ### 3. UML Diagram Gallery
 Detailed UML diagrams (using Mermaid.js syntax) map out the entire structural, behavioral, and interaction logic.
-*   **[Categorized UML Reference View](src/main/resources/Project_UML_Docs/Categorized_UML_Reference.md):** Single-page view of all diagrams.
+*   **[Categorized UML Reference View](Categorized_UML_Reference.md):** Single-page view of all diagrams.
 *   **[Structural Architecture](src/main/resources/Project_UML_Docs/Structural/):** System, Component, and Class logic diagrams.
 *   **[Behavioral Flows](src/main/resources/Project_UML_Docs/Behavioral/):** App state machines, Use Cases, and User Journeys.
 *   **[Interaction Flows](src/main/resources/Project_UML_Docs/Interactions/):** Sequence diagrams for Auth, 3D AR Customization, and ML Recommendations.
