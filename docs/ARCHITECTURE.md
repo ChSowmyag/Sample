@@ -4,6 +4,49 @@ The backend acts as the central data orchestrator for the mobile AR application.
 
 ---
 
+## 🏗️ System Architecture Overview
+
+```mermaid
+graph TB
+    subgraph "Mobile Client (React Native)"
+        UI["User Interface (React Native Screens)"]
+        Context["State Management (React Context API)"]
+        API_Client["Network Layer (Fetch/AsyncStorage)"]
+
+        subgraph "Interactive Engines"
+            AR_Scene["AR Hybrid Scene (ViroReact)"]
+            Studio_3D["3D Model Viewer (React Three Fiber)"]
+            Gesture_Handler["Gesture Logic (Reanimated)"]
+        end
+    end
+
+    subgraph "Distributed Backend (Cloud Hosted)"
+        Main_Server["Spring Boot API (Java 17/Maven)"]
+        Blender_Service["Blender Microservice (Python/FastAPI)"]
+        Rec_Engine["Recommendation Engine (Java/PostgreSQL)"]
+        DB[(PostgreSQL 15 / Persistence)]
+    end
+
+    %% Relationships
+    UI --> Context
+    Context --> API_Client
+    API_Client <--> Main_Server
+
+    UI --> AR_Scene
+    UI --> Studio_3D
+    Studio_3D --> Gesture_Handler
+    AR_Scene --> Gesture_Handler
+
+    Main_Server <--> DB
+    Main_Server <--> Blender_Service
+    Main_Server <--> Rec_Engine
+
+    Blender_Service -.-> |"Binary GLB Stream"| AR_Scene
+    Rec_Engine -.-> |"JSON Preferences"| UI
+```
+
+---
+
 ### 1. Spring Boot Core Service
 *   **Data Management & Authentication:** Handles user accounts, secures the API endpoints using robust session controls, and fetches real-time catalog data.
 *   **Customization Persistence:** Saves the user's selected configuration for cars inside the virtual Studio. Attributes stored include:
